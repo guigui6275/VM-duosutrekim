@@ -85,19 +85,9 @@ export default async function HomePage() {
         gridTemplateColumns: '1fr 0.5px 1fr',
         borderBottom: '0.5px solid var(--color-bordure)',
       }}>
-        {[
-          { initiales: 'GS', nom: 'Guillaume Sutre', instrument: 'Violon', href: 'https://guillaume-sutre.com' },
-          { initiales: 'KH', nom: 'Kyung-Hee Kim-Sutre', instrument: 'Harpe', href: 'https://kyung-hee-kim-sutre.com' },
-        ].map((membre, i) => (
-          i === 1 ? (
-            <>
-              <div key="divider" style={{ background: 'var(--color-bordure)' }} />
-              <MembreCard key={membre.nom} {...membre} />
-            </>
-          ) : (
-            <MembreCard key={membre.nom} {...membre} />
-          )
-        ))}
+       <MembreCard initiales="GS" nom="Guillaume Sutre" instrument="Violon" href="https://guillaume-sutre.com" />
+      <div style={{ background: 'var(--color-bordure)' }} />
+      <MembreCard initiales="KH" nom="Kyung-Hee Kim-Sutre" instrument="Harpe" href="https://kyung-hee-kim-sutre.com" />
       </div>
 
       <div style={{
