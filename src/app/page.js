@@ -1,65 +1,313 @@
-import Image from "next/image";
+import { getArtiste, getAlbums, getConcerts, getActualites } from '@/lib/api';
 
-export default function Home() {
+const SLUG = process.env.NEXT_PUBLIC_ARTISTE_SLUG;
+
+export default async function HomePage() {
+  const [duo, albums, concerts, actualites] = await Promise.all([
+    getArtiste(SLUG),
+    getAlbums(SLUG),
+    getConcerts(SLUG, true),
+    getActualites(SLUG),
+  ]);
+
+  const d = duo.data[0];
+  const dernierAlbum = albums.data[0];
+  const prochainConcert = concerts.data[0];
+
+  if (!d) return <div style={{ padding: '40px' }}>Duo non trouvé.</div>;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div>
+      <div style={{
+        padding: '52px 40px 44px',
+        borderBottom: '0.5px solid var(--color-bordure)',
+      }}>
+        <p style={{
+          fontSize: '10px',
+          letterSpacing: '0.22em',
+          textTransform: 'uppercase',
+          color: 'var(--color-or)',
+          marginBottom: '14px',
+          fontWeight: '300',
+        }}>Violon & Harpe</p>
+
+        <h1 style={{
+          fontFamily: 'var(--font-playfair)',
+          fontSize: '44px',
+          fontWeight: '400',
+          color: 'var(--color-texte)',
+          marginBottom: '8px',
+          lineHeight: '1.05',
+        }}>Duo Sutre-Kim</h1>
+
+        <p style={{
+          fontFamily: 'var(--font-playfair)',
+          fontSize: '18px',
+          fontStyle: 'italic',
+          color: 'var(--color-accent)',
+          marginBottom: '20px',
+        }}>Guillaume Sutre & Kyung-Hee Kim-Sutre</p>
+
+        <p style={{
+          fontSize: '15px',
+          lineHeight: '1.8',
+          color: 'var(--color-texte-secondaire)',
+          maxWidth: '560px',
+          marginBottom: '28px',
+          fontWeight: '300',
+        }}>{d.bio_courte}</p>
+
+        <div style={{ display: 'flex', gap: '14px' }}>
+          <a href="/concerts" style={{
+            padding: '10px 22px',
+            background: 'var(--color-noir)',
+            color: '#F6F3F0',
+            fontSize: '11px',
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            fontWeight: '300',
+          }}>Prochains concerts</a>
+          <a href="/discographie" style={{
+            padding: '10px 22px',
+            background: 'transparent',
+            color: 'var(--color-noir)',
+            border: '0.5px solid var(--color-noir)',
+            fontSize: '11px',
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            fontWeight: '300',
+          }}>Discographie</a>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 0.5px 1fr',
+        borderBottom: '0.5px solid var(--color-bordure)',
+      }}>
+        {[
+          { initiales: 'GS', nom: 'Guillaume Sutre', instrument: 'Violon', href: 'https://guillaume-sutre.com' },
+          { initiales: 'KH', nom: 'Kyung-Hee Kim-Sutre', instrument: 'Harpe', href: 'https://kyung-hee-kim-sutre.com' },
+        ].map((membre, i) => (
+          i === 1 ? (
+            <>
+              <div key="divider" style={{ background: 'var(--color-bordure)' }} />
+              <MembreCard key={membre.nom} {...membre} />
+            </>
+          ) : (
+            <MembreCard key={membre.nom} {...membre} />
+          )
+        ))}
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 0.5px 1fr 0.5px 1fr',
+        borderBottom: '0.5px solid var(--color-bordure)',
+      }}>
+        <div style={{ padding: '28px 24px' }}>
+          <p style={{
+            fontSize: '10px',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            color: 'var(--color-accent)',
+            marginBottom: '16px',
+            fontWeight: '300',
+          }}>Dernier album</p>
+
+          {dernierAlbum ? (
+            <>
+              <div style={{
+                width: '100%',
+                aspectRatio: '1',
+                background: 'var(--color-bg-alt)',
+                marginBottom: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '0.5px solid var(--color-bordure)',
+              }}>
+                <span style={{
+                  fontFamily: 'var(--font-playfair)',
+                  fontSize: '14px',
+                  fontStyle: 'italic',
+                  color: 'var(--color-texte-muted)',
+                }}>{dernierAlbum.titre}</span>
+              </div>
+              <p style={{ fontFamily: 'var(--font-playfair)', fontSize: '15px', marginBottom: '3px' }}>
+                {dernierAlbum.titre}
+              </p>
+              <p style={{ fontSize: '12px', color: 'var(--color-texte-muted)', fontWeight: '300' }}>
+                {dernierAlbum.date_sortie
+                  ? new Date(dernierAlbum.date_sortie).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+                  : ''}
+              </p>
+            </>
+          ) : (
+            <p style={{ fontSize: '13px', color: 'var(--color-texte-muted)', fontStyle: 'italic' }}>
+              Aucun album pour l'instant
+            </p>
+          )}
         </div>
-      </main>
+
+        <div style={{ background: 'var(--color-bordure)' }} />
+
+        <div style={{ padding: '28px 24px' }}>
+          <p style={{
+            fontSize: '10px',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            color: 'var(--color-accent)',
+            marginBottom: '16px',
+            fontWeight: '300',
+          }}>Prochain concert</p>
+
+          {prochainConcert ? (
+            <div>
+              <p style={{ fontSize: '11px', color: 'var(--color-or)', marginBottom: '3px', fontWeight: '300' }}>
+                {new Date(prochainConcert.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+              </p>
+              <p style={{ fontFamily: 'var(--font-playfair)', fontSize: '14px', marginBottom: '2px' }}>
+                {prochainConcert.titre}
+              </p>
+              <p style={{ fontSize: '12px', color: 'var(--color-texte-muted)', fontWeight: '300' }}>
+                {prochainConcert.lieu} · {prochainConcert.ville}
+              </p>
+            </div>
+          ) : (
+            <p style={{ fontSize: '13px', color: 'var(--color-texte-muted)', fontStyle: 'italic' }}>
+              Prochaines dates bientôt
+            </p>
+          )}
+        </div>
+
+        <div style={{ background: 'var(--color-bordure)' }} />
+
+        <div style={{ padding: '28px 24px' }}>
+          <p style={{
+            fontSize: '10px',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            color: 'var(--color-accent)',
+            marginBottom: '16px',
+            fontWeight: '300',
+          }}>Actualités</p>
+
+          {actualites.data.slice(0, 2).map(actu => (
+            <div key={actu.id} style={{
+              paddingBottom: '12px',
+              marginBottom: '12px',
+              borderBottom: '0.5px solid var(--color-bordure-legere)',
+            }}>
+              <p style={{ fontSize: '11px', color: 'var(--color-or)', marginBottom: '4px', fontWeight: '300' }}>
+                {actu.date_publication
+                  ? new Date(actu.date_publication).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+                  : ''}
+              </p>
+              <p style={{ fontFamily: 'var(--font-playfair)', fontSize: '13px', color: 'var(--color-texte)', lineHeight: '1.4' }}>
+                {actu.titre}
+              </p>
+            </div>
+          ))}
+
+          {actualites.data.length === 0 && (
+            <p style={{ fontSize: '13px', color: 'var(--color-texte-muted)', fontStyle: 'italic' }}>
+              Actualités à venir
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div style={{
+        padding: '28px 40px',
+        background: 'var(--color-bg-alt)',
+        borderBottom: '0.5px solid var(--color-bordure)',
+      }}>
+        <p style={{
+          fontSize: '10px',
+          letterSpacing: '0.2em',
+          textTransform: 'uppercase',
+          color: 'var(--color-accent)',
+          marginBottom: '16px',
+          fontWeight: '300',
+        }}>Répertoire</p>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: '12px',
+        }}>
+          {[
+            { periode: 'Baroque', compositeurs: 'Haendel, Telemann' },
+            { periode: 'Classique & romantique', compositeurs: 'Mozart, Spohr' },
+            { periode: 'Français', compositeurs: 'Debussy, Ravel, Tournier' },
+            { periode: 'Contemporain', compositeurs: 'Créations & commandes' },
+          ].map(({ periode, compositeurs }) => (
+            <div key={periode} style={{
+              padding: '14px 16px',
+              border: '0.5px solid var(--color-bordure)',
+              background: 'var(--color-bg)',
+            }}>
+              <p style={{
+                fontSize: '10px',
+                letterSpacing: '0.12em',
+                color: 'var(--color-or)',
+                fontWeight: '300',
+                marginBottom: '6px',
+              }}>{periode}</p>
+              <p style={{
+                fontFamily: 'var(--font-playfair)',
+                fontSize: '13px',
+                color: 'var(--color-texte)',
+                lineHeight: '1.5',
+                fontStyle: 'italic',
+              }}>{compositeurs}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MembreCard({ initiales, nom, instrument, href }) {
+  return (
+    <div style={{
+      padding: '28px 32px',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '16px',
+    }}>
+      <div style={{
+        width: '52px',
+        height: '52px',
+        borderRadius: '50%',
+        background: '#1A1A1A',
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: 'var(--font-playfair)',
+        fontSize: '16px',
+        color: '#F6F3F0',
+      }}>{initiales}</div>
+      <div>
+        <p style={{ fontFamily: 'var(--font-playfair)', fontSize: '16px', color: 'var(--color-texte)', marginBottom: '3px' }}>
+          {nom}
+        </p>
+        <p style={{ fontSize: '12px', fontStyle: 'italic', color: 'var(--color-accent)', fontWeight: '300', marginBottom: '6px' }}>
+          {instrument}
+        </p>
+        <a href={href} style={{
+          fontSize: '11px',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          color: 'var(--color-texte-muted)',
+          borderBottom: '0.5px solid var(--color-bordure)',
+          paddingBottom: '1px',
+          fontWeight: '300',
+        }}>Site personnel</a>
+      </div>
     </div>
   );
 }
