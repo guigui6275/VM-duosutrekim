@@ -28,19 +28,10 @@ export default function Footer() {
       </span>
 
       <div style={{ display: 'flex', gap: '18px' }}>
-        {[
-          { href: 'https://facebook.com', label: 'Facebook' },
-          { href: '/contact', label: 'Contact' },
-          { href: 'https://sonarti.com', label: 'Sonarti Records' },
-        ].map(({ href, label }) => (
-          <Link key={href} href={href} style={{
-            fontSize: '11px',
-            color: '#5A5A5A',
-            fontWeight: '300',
-          }}>
-            {label}
-          </Link>
-        ))}
+        <a href="https://www.facebook.com/DuoSutreKim/" target="_blank" rel="noopener noreferrer" style={{ fontSize: '11px', color: '#5A5A5A', fontWeight: '300' }}>Facebook</a>
+        <Link href="/contact" style={{ fontSize: '11px', color: '#5A5A5A', fontWeight: '300' }}>Contact</Link>
+        <a href="https://sonarti.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: '11px', color: '#5A5A5A', fontWeight: '300' }}>Sonarti Records</a>
+        <Link href="/mentions-legales" style={{ fontSize: '11px', color: '#5A5A5A', fontWeight: '300' }}>Mentions légales</Link>
       </div>
     </footer>
   );
