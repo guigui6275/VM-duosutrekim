@@ -1,4 +1,6 @@
 import { getArtiste, getAlbums, getConcerts, getActualites } from '@/lib/api';
+import FacebookWidget from '@/components/FacebookWidget';
+import FacebookLikeButton from '@/components/FacebookLikeButton';
 
 const SLUG = process.env.NEXT_PUBLIC_ARTISTE_SLUG;
 
@@ -85,9 +87,9 @@ export default async function HomePage() {
         gridTemplateColumns: '1fr 0.5px 1fr',
         borderBottom: '0.5px solid var(--color-bordure)',
       }}>
-       <MembreCard initiales="GS" nom="Guillaume Sutre" instrument="Violon" href="https://guillaume-sutre.com" />
-      <div style={{ background: 'var(--color-bordure)' }} />
-      <MembreCard initiales="KH" nom="Kyung-Hee Kim-Sutre" instrument="Harpe" href="https://kyung-hee-kim-sutre.com" />
+        <MembreCard initiales="GS" nom="Guillaume Sutre" instrument="Violon" href="https://guillaume-sutre.com" />
+        <div style={{ background: 'var(--color-bordure)' }} />
+        <MembreCard initiales="KH" nom="Kyung-Hee Kim-Sutre" instrument="Harpe" href="https://kyung-hee-kim-sutre.com" />
       </div>
 
       <div style={{
@@ -255,6 +257,32 @@ export default async function HomePage() {
             </div>
           ))}
         </div>
+      </div>
+
+      <div style={{
+        padding: '32px 40px',
+        borderBottom: '0.5px solid var(--color-bordure)',
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '20px',
+        }}>
+          <p style={{
+            fontSize: '10px',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            color: 'var(--color-accent)',
+            fontWeight: '300',
+          }}>Suivez-nous</p>
+          <FacebookLikeButton pageUrl="https://www.facebook.com/DuoSutreKim/" />
+        </div>
+        <FacebookWidget
+          pageUrl="https://www.facebook.com/DuoSutreKim/"
+          tabs="timeline"
+          height={400}
+        />
       </div>
     </div>
   );
