@@ -1,20 +1,25 @@
 import { getArtiste } from '@/lib/api';
+import { getGoogleDoc, GOOGLE_DOCS } from '@/lib/google-doc';
 
 const SLUG = process.env.NEXT_PUBLIC_ARTISTE_SLUG;
 
 export const metadata = {
   title: 'Le duo — Duo Sutre-Kim',
+  description: 'Biographie complète du Duo Sutre-Kim',
 };
 
-export default async function LeDuoPage() {
-  const duo = await getArtiste(SLUG);
-  const d = duo.data[0];
+export default async function BiographiePage() {
+  const [artiste, paragraphes] = await Promise.all([
+    getArtiste(SLUG),
+    getGoogleDoc(GOOGLE_DOCS.biographieCourteDSK.url, GOOGLE_DOCS.biographieCourteDSK.options)
+  ]);
 
-  if (!d) return <div style={{ padding: '40px' }}>Duo non trouvé.</div>;
+  const a = artiste.data[0];
+  if (!a) return <div style={{ padding: '40px' }}>Artiste non trouvé.</div>;
 
   return (
     <div>
-      <div style={{
+      <div className="apropos-header" style={{
         padding: '40px 40px 32px',
         borderBottom: '0.5px solid var(--color-bordure)',
       }}>
@@ -33,12 +38,12 @@ export default async function LeDuoPage() {
         }}>Le duo</h1>
       </div>
 
-      <div style={{
+      <div className="apropos-layout" style={{
         display: 'grid',
         gridTemplateColumns: '1fr 240px',
         borderBottom: '0.5px solid var(--color-bordure)',
       }}>
-        <div style={{
+        <div className="apropos-main" style={{
           padding: '40px 36px 40px 40px',
           borderRight: '0.5px solid var(--color-bordure)',
         }}>
@@ -51,16 +56,31 @@ export default async function LeDuoPage() {
             fontWeight: '300',
           }}>Notre histoire</p>
 
-          {d.bio_longue ? (
+          {/* Biographie depuis Google Doc, fallback Strapi */}
+          {paragraphes ? (
+            <div style={{ marginBottom: '24px' }}>
+              {paragraphes.map((paragraphe, i) => (
+                <p key={i} style={{
+                  fontSize: '15px',
+                  lineHeight: '1.85',
+                  color: 'var(--color-texte-secondaire)',
+                  fontWeight: '300',
+                  marginBottom: '16px',
+                  textAlign: 'justify',
+                }}>{paragraphe}</p>
+              ))}
+            </div>
+          ) : a.bio_longue ? (
             <div style={{
               fontSize: '15px',
               lineHeight: '1.85',
               color: 'var(--color-texte-secondaire)',
               fontWeight: '300',
+              marginBottom: '24px',
             }}>
-              {typeof d.bio_longue === 'string'
-                ? d.bio_longue
-                : d.bio_longue.map((block, i) => (
+              {typeof a.bio_longue === 'string'
+                ? a.bio_longue
+                : a.bio_longue.map((block, i) => (
                   <p key={i} style={{ marginBottom: '16px' }}>
                     {block.children?.map(child => child.text).join('')}
                   </p>
@@ -73,9 +93,19 @@ export default async function LeDuoPage() {
               color: 'var(--color-texte-secondaire)',
               fontWeight: '300',
               marginBottom: '24px',
-            }}>{d.bio_courte}</p>
+            }}>{a.bio_courte}</p>
           )}
-
+            <a href="/le-duo/bio-complete" style={{
+  display: 'inline-block',
+  fontSize: '11px',
+  letterSpacing: '0.1em',
+  textTransform: 'uppercase',
+  color: 'var(--color-accent)',
+  border: '0.5px solid var(--color-accent)',
+  padding: '10px 22px',
+  fontWeight: '300',
+  marginBottom: '32px',
+}}>Lire la biographie complète →</a>
           <div style={{
             borderLeft: '2px solid var(--color-accent)',
             paddingLeft: '20px',
@@ -139,7 +169,7 @@ export default async function LeDuoPage() {
           </div>
         </div>
 
-        <div style={{ padding: '40px 28px' }}>
+        <div className="apropos-sidebar" style={{ padding: '40px 28px' }}>
           <p style={{
             fontSize: '10px',
             letterSpacing: '0.16em',
@@ -151,7 +181,7 @@ export default async function LeDuoPage() {
 
           {[
             { initiales: 'GS', nom: 'Guillaume Sutre', instrument: 'Violon', href: 'https://guillaume-sutre.com' },
-            { initiales: 'KH', nom: 'Kyung-Hee Kim-Sutre', instrument: 'Harpe', href: 'https://kyung-hee-kim-sutre.com' },
+            { initiales: 'KHK', nom: 'Kyung-Hee Kim-Sutre', instrument: 'Harpe', href: 'https://kyung-hee-kim-sutre.com' },
           ].map(({ initiales, nom, instrument, href }) => (
             <div key={nom} style={{
               marginBottom: '20px',

@@ -25,9 +25,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="fr" className={`${playfair.variable} ${sourceSerif.variable}`}>
       <body>
-        <div style={{
-          maxWidth: '860px',
-          margin: '0 auto',
+        <div className="site-container" style={{
           border: '0.5px solid var(--color-bordure)',
           minHeight: '100vh',
           display: 'flex',

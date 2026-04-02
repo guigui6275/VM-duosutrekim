@@ -1,19 +1,22 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --font-playfair: 'Playfair Display', Georgia, serif;
-  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-playfair: 'Cormorant Garamond', Georgia, serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, sans-serif;
 
-  --color-bg: #F6F3F0;
-  --color-bg-alt: #F0EBE4;
-  --color-noir: #1A1A1A;
-  --color-accent: #8A7060;
-  --color-or: #C8A84A;
-  --color-texte: #1A1A1A;
-  --color-texte-secondaire: #4A4A4A;
-  --color-texte-muted: #8A7060;
-  --color-bordure: #D8D0C8;
-  --color-bordure-legere: #EDE5D8;
+  --color-bg: #2d2f33;
+  --color-bg-alt: #33353a;
+  --color-noir: #232528;
+  --color-accent: #a68b6b;
+  --color-or: #a68b6b;
+  --color-texte: #e8e4dc;
+  --color-texte-secondaire: #9a9892;
+  --color-texte-muted: #6b6862;
+  --color-bordure: #3a3c40;
+  --color-bordure-legere: #35373b;
+  --color-ivoire: #e8e4dc;
+  --color-surface: #33353a;
 }
 
 html { font-size: 16px; }
@@ -21,7 +24,7 @@ html { font-size: 16px; }
 body {
   background: var(--color-bg);
   color: var(--color-texte);
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-weight: 300;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
@@ -35,4 +38,319 @@ h1, h2, h3, h4 {
 
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
-button { cursor: pointer; font-family: var(--font-serif); }
+button { cursor: pointer; font-family: var(--font-sans); }
+
+@media (max-width: 830px) {
+
+  /* ── Règles génériques (inline style selectors) ── */
+
+  div[style*="grid-template-columns: 1fr 220px"],
+  div[style*="grid-template-columns: 1fr 240px"],
+  div[style*="grid-template-columns: 1fr 280px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  div[style*="grid-template-columns: 200px 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  div[style*="grid-template-columns: repeat(3, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  div[style*="grid-template-columns: repeat(4, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  div[style*="grid-template-columns: 90px 1fr auto"] {
+    grid-template-columns: 60px 1fr !important;
+  }
+
+  .album-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .album-sidebar {
+    border-right: none !important;
+    border-bottom: 0.5px solid var(--color-bordure) !important;
+  }
+
+  /* ── Page À propos ── */
+
+  .apropos-header {
+    padding: 28px 20px 24px !important;
+  }
+
+  .apropos-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .apropos-main {
+    padding: 28px 20px !important;
+    border-right: none !important;
+    border-bottom: 0.5px solid var(--color-bordure) !important;
+  }
+
+  .apropos-sidebar {
+    padding: 28px 20px !important;
+  }
+
+  .apropos-documents {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* ── Footer ── */
+
+  .footer {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 20px !important;
+    text-align: center !important;
+  }
+
+  .footer-label {
+    display: none !important;
+  }
+
+  .footer-liens {
+    flex-wrap: wrap !important;
+    gap: 12px 18px !important;
+    justify-content: center !important;
+  }
+
+  /* ── Page Home ── */
+
+  .home-hero {
+    grid-template-columns: 1fr !important;
+  }
+
+  .home-hero-main {
+    padding: 32px 20px !important;
+    border-right: none !important;
+  }
+
+  .home-hero-aside {
+    display: none !important;
+  }
+
+  .home-trois-colonnes {
+    grid-template-columns: 1fr !important;
+  }
+
+  .home-diviseur {
+    display: none !important;
+  }
+
+  .home-bandeau-bio {
+    grid-template-columns: 1fr !important;
+    padding: 28px 20px !important;
+    gap: 20px !important;
+  }
+
+  .home-facebook {
+    padding: 24px 20px !important;
+  }
+}
+
+/* ── Biographie Google Doc ── */
+
+.biographie-contenu {
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--color-texte-secondaire);
+  font-weight: 300;
+}
+
+.biographie-contenu p {
+  margin-bottom: 16px;
+}
+
+.biographie-contenu strong,
+.biographie-contenu b {
+  font-weight: 400;
+  color: var(--color-ivoire);
+}
+
+.biographie-contenu em,
+.biographie-contenu i {
+  font-family: var(--font-playfair);
+  color: var(--color-accent);
+}
+
+.biographie-contenu a {
+  color: var(--color-accent);
+  border-bottom: 0.5px solid var(--color-accent);
+  padding-bottom: 1px;
+}
+
+.biographie-contenu h1,
+.biographie-contenu h2,
+.biographie-contenu h3 {
+  font-family: var(--font-playfair);
+  color: var(--color-ivoire);
+  margin: 32px 0 12px;
+  font-weight: 400;
+}
+
+.biographie-contenu h1 { font-size: 24px; }
+.biographie-contenu h2 { font-size: 20px; }
+.biographie-contenu h3 { font-size: 17px; }
+
+/* ── Page Calendrier ── */
+
+.calendrier-header,
+.calendrier-liste {
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+
+.calendrier-periodes,
+.calendrier-filtres {
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+
+/* ConcertRow : date + info sur 2 colonnes, billetterie sous l'info */
+.concert-row {
+  grid-template-columns: 70px 1fr !important;
+  gap: 16px !important;
+}
+
+/* La colonne billetterie desktop disparaît */
+.concert-billetterie-desktop {
+  display: none !important;
+}
+
+/* Le lien billetterie dans l'info devient visible */
+.concert-billetterie-mobile {
+  display: inline-block !important;
+}
+/* ── Page Enseignement ── */
+
+.enseignement-header {
+  padding: 28px 20px 24px !important;
+}
+
+.enseignement-layout {
+  grid-template-columns: 1fr !important;
+}
+
+.enseignement-main {
+  padding: 28px 20px !important;
+  border-right: none !important;
+  border-bottom: 0.5px solid var(--color-bordure) !important;
+}
+
+.enseignement-sidebar {
+  padding: 28px 20px !important;
+}
+
+.enseignement-academies {
+  grid-template-columns: 1fr !important;
+}
+/* ── Page Blog (liste) ── */
+
+.blog-header {
+  padding: 28px 20px 24px !important;
+}
+
+/* Grille texte + image → 1 colonne, image passe en dessous */
+.blog-article-row {
+  grid-template-columns: 1fr !important;
+}
+
+.blog-article-contenu {
+  padding: 24px 20px !important;
+}
+
+/* Image : hauteur fixe en dessous du texte, border-left → border-top */
+.blog-article-image {
+  border-left: none !important;
+  border-top: 0.5px solid var(--color-bordure) !important;
+  height: 200px !important;
+}
+/* ── Page Blog (article) ── */
+
+/* Image couverture : hauteur réduite */
+.article-couverture img {
+  height: 220px !important;
+}
+
+.article-header {
+  padding: 28px 20px 24px !important;
+}
+
+/* Layout texte + galerie → 1 colonne */
+.article-layout {
+  grid-template-columns: 1fr !important;
+}
+
+.article-corps {
+  padding: 28px 20px !important;
+  border-right: none !important;
+  border-bottom: 0.5px solid var(--color-bordure) !important;
+}
+
+/* Galerie : passe en dessous, photos en grille horizontale 2 colonnes */
+.article-galerie {
+  padding: 20px !important;
+  border-top: none !important;
+}
+
+.article-galerie-grille {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+/* Footer : colonne sur mobile */
+.article-footer {
+  padding: 20px !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+}
+/* ── Page Médias ── */
+
+.medias-header {
+  padding: 28px 20px 24px !important;
+}
+
+/* Grille 2 colonnes → 1 colonne sur mobile */
+.medias-grid {
+  grid-template-columns: 1fr !important;
+}
+
+.medias-card {
+  padding: 20px !important;
+  border-right: none !important;
+}
+/* ── Page Contact ── */
+
+.contact-header {
+  padding: 28px 20px 24px !important;
+}
+
+.contact-layout {
+  grid-template-columns: 1fr !important;
+}
+
+.contact-form {
+  padding: 28px 20px !important;
+  border-right: none !important;
+  border-bottom: 0.5px solid var(--color-bordure) !important;
+}
+
+/* Prénom + Nom → 1 colonne sur mobile */
+.contact-nom-prenom {
+  grid-template-columns: 1fr !important;
+}
+
+.contact-sidebar {
+  padding: 28px 20px !important;
+}
+:root {
+  /* ... variables existantes ... */
+  --color-ivoire: #F8F4EF;
+}

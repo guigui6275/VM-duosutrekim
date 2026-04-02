@@ -48,7 +48,7 @@ export default function ContactPage() {
           color: 'var(--color-or)',
           marginBottom: '10px',
           fontWeight: '300',
-        }}>Duo Sutre-Kim</p>
+        }}>Guillaume Sutre</p>
         <h1 style={{
           fontFamily: 'var(--font-playfair)',
           fontSize: '32px',
@@ -260,12 +260,12 @@ export default function ContactPage() {
               marginBottom: '10px',
               fontWeight: '300',
             }}>Site web</p>
-            <a href="https://duosutrekim.com" style={{
+            <a href="https://guillaume-sutre.com" style={{
               fontSize: '13px',
               color: 'var(--color-or)',
               fontWeight: '300',
               borderBottom: '0.5px solid var(--color-or)',
-            }}>duosutrekim.com</a>
+            }}>guillaume-sutre.com</a>
           </div>
 
           <div style={{

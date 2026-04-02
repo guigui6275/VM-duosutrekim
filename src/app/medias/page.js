@@ -21,7 +21,8 @@ export default async function MediasPage() {
 
   return (
     <div>
-      <div style={{
+      {/* className="medias-header" → padding réduit sur mobile */}
+      <div className="medias-header" style={{
         padding: '40px 40px 32px',
         borderBottom: '0.5px solid var(--color-bordure)',
       }}>
@@ -41,13 +42,15 @@ export default async function MediasPage() {
       </div>
 
       {videos.data.length > 0 ? (
-        <div style={{
+        // className="medias-grid" → repeat(2,1fr) → 1 colonne sur mobile
+        <div className="medias-grid" style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(2, 1fr)',
           gap: '0',
         }}>
           {videos.data.map((video, index) => (
-            <div key={video.id} style={{
+            // className="medias-card" → padding réduit, border-right effacée sur mobile
+            <div key={video.id} className="medias-card" style={{
               borderRight: index % 2 === 0 ? '0.5px solid var(--color-bordure)' : 'none',
               borderBottom: '0.5px solid var(--color-bordure)',
               padding: '24px',
