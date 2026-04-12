@@ -15,6 +15,7 @@ export default async function HomePage() {
   const d = duo.data[0];
   const dernierAlbum = albums.data[0];
   const prochainConcert = concerts.data[0];
+  
 
   if (!d) return <div style={{ padding: '40px' }}>Duo non trouvé.</div>;
 
@@ -89,7 +90,7 @@ export default async function HomePage() {
       }}>
         <MembreCard initiales="GS" nom="Guillaume Sutre" instrument="Violon" href="https://guillaume-sutre.com" />
         <div style={{ background: 'var(--color-bordure)' }} />
-        <MembreCard initiales="KH" nom="Kyung-Hee Kim-Sutre" instrument="Harpe" href="https://kyung-hee-kim-sutre.com" />
+        <MembreCard initiales="KHK" nom="Kyung-Hee Kim-Sutre" instrument="Harpe" href="https://kyung-hee-kim-sutre.com" />
       </div>
 
       <div style={{
