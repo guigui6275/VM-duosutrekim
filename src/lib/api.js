@@ -32,13 +32,12 @@ export async function getAlbums(artisteSlug = null) {
 export async function getConcerts(artisteSlug = null, aVenir = true) {
   const params = {
     populate: '*',
-    sort: aVenir ? ['date:asc'] : ['date:desc'],
-    filters: { passe: { $eq: !aVenir } }
+    sort: aVenir ? ['date_debut:asc'] : ['date_debut:desc'],
   };
   if (artisteSlug) {
-    params.filters.artistes = { slug: { $eq: artisteSlug } };
+    params.filters = { artistes: { slug: { $eq: artisteSlug } } };
   }
-  return fetchAPI('/concerts', params);
+  return fetchAPI('/evenements', params);
 }
 
 export async function getActualites(artisteSlug = null) {
@@ -55,4 +54,35 @@ export async function getRevues(artisteSlug = null) {
     params.filters = { artistes: { slug: { $eq: artisteSlug } } };
   }
   return fetchAPI('/revues', params);
+}
+export async function getAlbumsComplets(artisteSlug = null) {
+  const params = {
+    populate: {
+      pochette: true,
+      galerie: true,
+      artistes: { fields: ['nom', 'slug'] },
+      recompenses: { populate: ['image'] },
+    },
+    sort: ['date_sortie:desc'],
+  };
+  if (artisteSlug) {
+    params.filters = { artistes: { slug: { $eq: artisteSlug } } };
+  }
+  return fetchAPI('/albums', params);
+}
+
+export async function getRevuesPourDiscographie(artisteSlug = null) {
+  const params = {
+    populate: { document: true, albums: { fields: ['slug'] } },
+    pagination: { pageSize: 100 },
+    sort: ['date:desc'],
+  };
+  if (artisteSlug) {
+    params.filters = { artistes: { slug: { $eq: artisteSlug } } };
+  }
+  return fetchAPI('/revues', params);
+}
+
+export async function getPlateformes() {
+  return fetchAPI('/plateformes', { populate: ['logo'] });
 }
