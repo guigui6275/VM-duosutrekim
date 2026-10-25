@@ -67,7 +67,7 @@ export default async function BiographiePage() {
                   fontWeight: '300',
                   marginBottom: '16px',
                   textAlign: 'justify',
-                }}>{paragraphe}</p>
+                }} dangerouslySetInnerHTML={{ __html: paragraphe }} />
               ))}
             </div>
           ) : a.bio_longue ? (

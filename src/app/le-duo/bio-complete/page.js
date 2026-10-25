@@ -98,7 +98,7 @@ export default async function BiographiePage() {
               color: 'var(--color-texte-secondaire)',
               fontWeight: '300',
               marginBottom: '16px',
-            }}>{paragraphe}</p>
+            }} dangerouslySetInnerHTML={{ __html: paragraphe }} />
           ))
         ) : a.bio_longue ? (
           <div style={{
