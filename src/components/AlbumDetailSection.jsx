@@ -18,7 +18,7 @@ const LIENS_PLATEFORMES = [
   { champ: 'lien_deezer', nom: 'Deezer' },
   { champ: 'lien_apple_music', nom: 'Apple Music' },
   { champ: 'lien_youtube_music', nom: 'YouTube Music' },
-  { champ: 'lien_amazon', nom: 'Amazon Music' },
+  { champ: 'lien_amazon', nom: 'Amazon' },
   { champ: 'lien_uvm', nom: 'UVM Distribution' },
   { champ: 'lien_discogs', nom: 'Discogs' },
   { champ: 'lien_tidal', nom: 'Tidal' },
