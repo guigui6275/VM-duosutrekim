@@ -41,9 +41,9 @@ export default function AlbumDetailSection({ album, revues = [], plateformes = [
   const galerie = album.galerie || [];
   const liensPlateformes = LIENS_PLATEFORMES.filter(l => album[l.champ]);
 
-  const spotifyMatch = album.lien_spotify?.match(/album\/([a-zA-Z0-9]+)/);
+  const spotifyMatch = album.lien_spotify?.match(/(album|playlist)\/([a-zA-Z0-9]+)/);
   const spotifyEmbedUrl = spotifyMatch
-    ? `https://open.spotify.com/embed/album/${spotifyMatch[1]}`
+    ? `https://open.spotify.com/embed/${spotifyMatch[1]}/${spotifyMatch[2]}`
     : null;
 
   return (
