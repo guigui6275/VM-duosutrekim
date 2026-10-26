@@ -14,6 +14,8 @@ export default async function MediasPage() {
       filters: { artistes: { slug: { $eq: SLUG } } },
       populate: '*',
       sort: ['date:desc'],
+      pagination: { pageSize: 100 },
+      locale: 'fr',
     }),
   ]);
 
