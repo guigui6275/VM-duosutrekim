@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
 
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 const SLUG = process.env.NEXT_PUBLIC_ARTISTE_SLUG || 'guillaume-sutre';
 
 function ConcertRow({ concert, isPast }) {
@@ -149,7 +148,7 @@ export default function CalendrierPage() {
   const [periode, setPeriode] = useState('avenir');
 
   useEffect(() => {
-    fetch(`${STRAPI_URL}/api/concerts?filters[artistes][slug][$eq]=${SLUG}&populate=*&sort=date:asc`)
+    fetch(`/api/concerts?filters[artistes][slug][$eq]=${SLUG}&populate=*&sort=date:asc`)
       .then(res => res.json())
       .then(data => {
         setConcerts(data.data || []);

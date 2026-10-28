@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 
-export default function GaleriePresse({ documents, strapiUrl }) {
+export default function GaleriePresse({ documents }) {
   const [lightbox, setLightbox] = useState(null);
 
   return (
@@ -58,7 +58,7 @@ export default function GaleriePresse({ documents, strapiUrl }) {
         {documents.map(revue => (
           <div
             key={revue.id}
-            onClick={() => setLightbox(`${strapiUrl}${revue.document.url}`)}
+            onClick={() => setLightbox(`${revue.document.url}`)}
             style={{
               cursor: 'pointer',
               border: '0.5px solid var(--color-bordure)',
@@ -66,7 +66,7 @@ export default function GaleriePresse({ documents, strapiUrl }) {
             }}
           >
             <img
-              src={`${strapiUrl}${revue.document.url}`}
+              src={`${revue.document.url}`}
               alt={revue.titre}
               style={{
                 width: '100%',

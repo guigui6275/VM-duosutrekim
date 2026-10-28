@@ -4,7 +4,6 @@ import { createPortal } from 'react-dom';
 import Markdown from '@/components/Markdown';
 import Lightbox from '@/components/Lightbox';
 
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
 const labelStyle = {
   color: 'var(--color-accent)',
@@ -34,7 +33,7 @@ export default function AlbumDetailSection({ album, revues = [], plateformes = [
 
   const getLogoUrl = (nom) => {
     const p = plateformes.find(p => p.titre === nom);
-    return p?.logo?.url ? `${STRAPI_URL}${p.logo.url}` : null;
+    return p?.logo?.url ? `${p.logo.url}` : null;
   };
 
   const recompenses = album.recompenses || [];
@@ -75,11 +74,11 @@ export default function AlbumDetailSection({ album, revues = [], plateformes = [
         <div className="album-sidebar" style={{ padding: '24px 28px', borderRight: '0.5px solid var(--color-bordure)' }}>
 
           <div
-            onClick={() => album.pochette && openLightbox(`${STRAPI_URL}${album.pochette.url}`)}
+            onClick={() => album.pochette && openLightbox(`${album.pochette.url}`)}
             style={{ width: '100%', marginBottom: '8px', border: '0.5px solid var(--color-bordure)', cursor: album.pochette ? 'pointer' : 'default', overflow: 'hidden' }}
           >
             {album.pochette ? (
-              <img src={`${STRAPI_URL}${album.pochette.url}`} alt={album.titre} style={{ width: '100%', height: 'auto', display: 'block' }} />
+              <img src={`${album.pochette.url}`} alt={album.titre} style={{ width: '100%', height: 'auto', display: 'block' }} />
             ) : (
               <div style={{ aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg-alt)' }}>
                 <span style={{ fontFamily: 'var(--font-playfair)', fontSize: '16px', fontStyle: 'italic', color: 'var(--color-texte-muted)' }}>{album.titre}</span>
@@ -92,7 +91,7 @@ export default function AlbumDetailSection({ album, revues = [], plateformes = [
               {recompenses.map(r => (
                 <a key={r.id} href={r.lien || '#'} target="_blank" rel="noopener noreferrer" title={r.nom}>
                   {r.image
-                    ? <img src={`${STRAPI_URL}${r.image.url}`} alt={r.nom} style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+                    ? <img src={`${r.image.url}`} alt={r.nom} style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
                     : <span style={{ fontSize: '12px', color: 'var(--color-or)' }}>{r.nom}</span>}
                 </a>
               ))}
@@ -207,8 +206,8 @@ export default function AlbumDetailSection({ album, revues = [], plateformes = [
               <p style={{ ...labelStyle, marginBottom: '16px', fontWeight: '300' }}>Autour de l'album</p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
                 {galerie.map((photo, i) => (
-                  <div key={i} onClick={() => openLightbox(`${STRAPI_URL}${photo.url}`)} style={{ cursor: 'pointer', overflow: 'hidden', border: '0.5px solid var(--color-bordure)' }}>
-                    <img src={`${STRAPI_URL}${photo.url}`} alt={`Photo ${i + 1}`} style={{ width: '100%', height: 'auto', display: 'block', imageOrientation: 'from-image' }} />
+                  <div key={i} onClick={() => openLightbox(`${photo.url}`)} style={{ cursor: 'pointer', overflow: 'hidden', border: '0.5px solid var(--color-bordure)' }}>
+                    <img src={`${photo.url}`} alt={`Photo ${i + 1}`} style={{ width: '100%', height: 'auto', display: 'block', imageOrientation: 'from-image' }} />
                   </div>
                 ))}
               </div>
@@ -221,7 +220,7 @@ export default function AlbumDetailSection({ album, revues = [], plateformes = [
               {revues.map(revue => (
                 <div
                   key={revue.id}
-                  onClick={() => revue.document && openLightbox(`${STRAPI_URL}${revue.document.url}`)}
+                  onClick={() => revue.document && openLightbox(`${revue.document.url}`)}
                   style={{ padding: '12px 0', borderBottom: '0.5px solid var(--color-bordure-legere)', cursor: revue.document ? 'pointer' : 'default' }}
                 >
                   {revue.citation && (
