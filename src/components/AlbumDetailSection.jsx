@@ -1,6 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import Image from 'next/image';
 import Markdown from '@/components/Markdown';
 import Lightbox from '@/components/Lightbox';
 
@@ -27,6 +28,34 @@ export default function AlbumDetailSection({ album, revues = [], plateformes = [
   const [lightbox, setLightbox] = useState(null);
   const [zoom, setZoom] = useState(1);
   const [zoomOrigin, setZoomOrigin] = useState('center center');
+  const pochetteWrapRef = useRef(null);
+  // Les récompenses ne doivent apparaître qu'une fois la pochette à la fois
+  // entièrement visible ET réellement affichée (pas juste géométriquement
+  // dans le viewport) — sinon l'animation démarre pendant que l'image est
+  // encore en train de charger (next/image, chargement différé).
+  const pochetteReadyRef = useRef({ visible: false, loaded: !album.pochette });
+
+  useEffect(() => {
+    const el = pochetteWrapRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.intersectionRatio >= 0.98) {
+          pochetteReadyRef.current.visible = true;
+          if (pochetteReadyRef.current.loaded) el.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.98 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const handlePochetteLoad = () => {
+    pochetteReadyRef.current.loaded = true;
+    if (pochetteReadyRef.current.visible) pochetteWrapRef.current?.classList.add('in-view');
+  };
 
   const openLightbox = (url) => { setLightbox(url); setZoom(1); setZoomOrigin('center center'); };
   const closeLightbox = () => { setLightbox(null); setZoom(1); };
@@ -74,29 +103,46 @@ export default function AlbumDetailSection({ album, revues = [], plateformes = [
         <div className="album-sidebar" style={{ padding: '24px 28px', borderRight: '0.5px solid var(--color-bordure)' }}>
 
           <div
-            onClick={() => album.pochette && openLightbox(`${album.pochette.url}`)}
-            style={{ width: '100%', marginBottom: '8px', border: '0.5px solid var(--color-bordure)', cursor: album.pochette ? 'pointer' : 'default', overflow: 'hidden' }}
+            ref={pochetteWrapRef}
+            className="album-pochette-wrap"
+            style={{ width: '100%', marginBottom: recompenses.length > 0 ? '28px' : '8px', position: 'relative' }}
           >
-            {album.pochette ? (
-              <img src={`${album.pochette.url}`} alt={album.titre} style={{ width: '100%', height: 'auto', display: 'block' }} />
-            ) : (
-              <div style={{ aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg-alt)' }}>
-                <span style={{ fontFamily: 'var(--font-playfair)', fontSize: '16px', fontStyle: 'italic', color: 'var(--color-texte-muted)' }}>{album.titre}</span>
+            <div
+              onClick={() => album.pochette && openLightbox(`${album.pochette.url}`)}
+              style={{ border: '0.5px solid var(--color-bordure)', cursor: album.pochette ? 'pointer' : 'default', overflow: 'hidden', boxShadow: '0 16px 40px rgba(0,0,0,0.5)' }}
+            >
+              {album.pochette ? (
+                <Image
+                  src={album.pochette.url}
+                  alt={album.titre}
+                  width={album.pochette.width}
+                  height={album.pochette.height}
+                  sizes="(max-width: 920px) 100vw, 320px"
+                  onLoad={handlePochetteLoad}
+                  style={{ width: '100%', height: 'auto', display: 'block' }}
+                />
+              ) : (
+                <div style={{ aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg-alt)' }}>
+                  <span style={{ fontFamily: 'var(--font-playfair)', fontSize: '16px', fontStyle: 'italic', color: 'var(--color-texte-muted)' }}>{album.titre}</span>
+                </div>
+              )}
+            </div>
+
+            {recompenses.length > 0 && (
+              <div style={{
+                position: 'absolute', bottom: '-20px', left: 0, right: 0,
+                display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '8px',
+              }}>
+                {recompenses.map((r, i) => (
+                  <span key={r.id} title={r.nom} className="recompense-badge" style={{ display: 'flex', alignItems: 'flex-end', flexShrink: 0, animationDelay: `${i + 1}s` }}>
+                    {r.image
+                      ? <img src={`${r.image.url}`} alt={r.nom} style={{ height: '50px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.6))' }} />
+                      : <span style={{ fontSize: '10px', color: 'var(--color-or)', textAlign: 'center' }}>{r.nom}</span>}
+                  </span>
+                ))}
               </div>
             )}
           </div>
-
-          {recompenses.length > 0 && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
-              {recompenses.map(r => (
-                <a key={r.id} href={r.lien || '#'} target="_blank" rel="noopener noreferrer" title={r.nom}>
-                  {r.image
-                    ? <img src={`${r.image.url}`} alt={r.nom} style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
-                    : <span style={{ fontSize: '12px', color: 'var(--color-or)' }}>{r.nom}</span>}
-                </a>
-              ))}
-            </div>
-          )}
 
           {liensPlateformes.length > 0 && (
             <div style={{ marginBottom: '16px' }}>
