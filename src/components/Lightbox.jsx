@@ -19,10 +19,11 @@ export default function Lightbox({ src, onClose, zoom, zoomOrigin, onZoomIn, onZ
       if (isPdf(src) || isCalameo(src)) return;
       e.preventDefault();
       if (!imgRef.current) return;
-      const rect = imgRef.current.getBoundingClientRect();
-      const origin = `${((e.clientX - rect.left) / rect.width) * 100}% ${((e.clientY - rect.top) / rect.height) * 100}%`;
-      if (e.deltaY < 0) onZoomIn?.(origin);
-      else onZoomOut?.(origin);
+      // Origine au CENTRE (pas au curseur) : cette visionneuse n'a pas de
+      // déplacement, donc une origine au curseur à fort zoom ferait sortir
+      // l'image de l'écran sans moyen de la ramener.
+      if (e.deltaY < 0) onZoomIn?.('center center');
+      else onZoomOut?.('center center');
     };
 
     document.body.style.overflow = 'hidden';

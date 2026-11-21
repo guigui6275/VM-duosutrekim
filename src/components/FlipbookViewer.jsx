@@ -113,8 +113,22 @@ export default function FlipbookViewer({ src, onClose }) {
     return () => { annule = true; unsubscribe(); };
   }, [src]);
 
-  const flipNext = useCallback(() => livreRef.current?.pageFlip?.()?.flipNext(), []);
-  const flipPrev = useCallback(() => livreRef.current?.pageFlip?.()?.flipPrev(), []);
+  // En mode portrait (une page), `flipPrev()`/`flipNext()` sans coin explicite
+  // sautent SANS animation. Passer par `flip(pageCible, 'bottom')` force
+  // l'animation de tournage dans les deux sens.
+  const flipNext = useCallback(() => {
+    const pf = livreRef.current?.pageFlip?.();
+    if (!pf) return;
+    const n = pf.getPageCount?.() ?? 0;
+    const cible = Math.min((pf.getCurrentPageIndex?.() ?? pageCouranteRef.current) + 1, n - 1);
+    pf.flip ? pf.flip(cible, 'bottom') : pf.flipNext();
+  }, []);
+  const flipPrev = useCallback(() => {
+    const pf = livreRef.current?.pageFlip?.();
+    if (!pf) return;
+    const cible = Math.max((pf.getCurrentPageIndex?.() ?? pageCouranteRef.current) - 1, 0);
+    pf.flip ? pf.flip(cible, 'bottom') : pf.flipPrev();
+  }, []);
 
   // Dézoome et recentre (retour à l'affichage « page entière »).
   const reinitZoom = useCallback(() => {
@@ -220,6 +234,10 @@ export default function FlipbookViewer({ src, onClose }) {
       </div>
     );
   } else {
+    // Pan borné AU RENDU : même si le pan stocké devient trop grand après un
+    // changement de zoom (ex. on dézoome), la valeur AFFICHÉE reste dans les
+    // limites → l'image ne peut jamais sortir de l'écran.
+    const panAff = bornerPan(pan.x, pan.y, zoom, largeurLivre, h);
     centre = (
       // Wrapper transformé (zoom + déplacement). Quand c'est zoomé, CE wrapper
       // gère le déplacement (pan) au glissé — et le livre en dessous reçoit
@@ -243,8 +261,8 @@ export default function FlipbookViewer({ src, onClose }) {
           position: 'relative',
           // Au repos (zoom 1, pas de pan) AUCUN transform — un transform identité
           // forcerait un calque GPU ré-échantillonné (texte/images plus flous).
-          transform: (zoom > 1 || pan.x !== 0 || pan.y !== 0)
-            ? `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`
+          transform: (zoom > 1 || panAff.x !== 0 || panAff.y !== 0)
+            ? `translate(${panAff.x}px, ${panAff.y}px) scale(${zoom})`
             : 'none',
           transformOrigin: 'center center',
           transition: dragRef.current ? 'none' : 'transform 0.2s ease',
@@ -279,6 +297,28 @@ export default function FlipbookViewer({ src, onClose }) {
             ))}
           </HTMLFlipBook>
         </div>
+
+        {/* Zones tactiles gauche/droite — UNIQUEMENT en mode une page (téléphone)
+            et à zoom 1. En portrait, la détection de coin native de StPageFlip
+            est peu fiable au pointeur/tactile (surtout pour REVENIR en arrière à
+            gauche) : on tappe donc le côté gauche/droit de la page pour
+            reculer/avancer. `tourner()` appelle flipPrev/flipNext qui ANIMENT le
+            tournage (le coin se corne via l'animation). Sur desktop (deux pages)
+            on garde le pli natif au coin, qui lui fonctionne. */}
+        {!deuxPages && zoom === 1 && (
+          <>
+            <div
+              onClick={() => tourner('prev')}
+              title="Page précédente"
+              style={{ position: 'absolute', left: 0, top: 0, width: '45%', height: '100%', zIndex: 1, cursor: 'pointer' }}
+            />
+            <div
+              onClick={() => tourner('next')}
+              title="Page suivante"
+              style={{ position: 'absolute', right: 0, top: 0, width: '45%', height: '100%', zIndex: 1, cursor: 'pointer' }}
+            />
+          </>
+        )}
       </div>
     );
   }
