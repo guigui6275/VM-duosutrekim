@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import Markdown from '@/components/Markdown';
 import Lightbox from '@/components/Lightbox';
+import AlbumLivrets from '@/components/AlbumLivrets';
 
 
 const labelStyle = {
@@ -67,6 +68,7 @@ export default function AlbumDetailSection({ album, revues = [], plateformes = [
 
   const recompenses = album.recompenses || [];
   const galerie = album.galerie || [];
+  const livrets = (album.livrets || []).filter((l) => l?.fichier?.url);
   const liensPlateformes = LIENS_PLATEFORMES.filter(l => album[l.champ]);
 
   const spotifyMatch = album.lien_spotify?.match(/(album|playlist)\/([a-zA-Z0-9]+)/);
@@ -229,6 +231,13 @@ export default function AlbumDetailSection({ album, revues = [], plateformes = [
                   Écouter sur Spotify
                 </button>
               )}
+            </div>
+          )}
+
+          {livrets.length > 0 && (
+            <div style={{ marginBottom: '32px' }}>
+              <p style={{ ...labelStyle, marginBottom: '16px', fontWeight: '300' }}>Livret</p>
+              <AlbumLivrets livrets={livrets} />
             </div>
           )}
 

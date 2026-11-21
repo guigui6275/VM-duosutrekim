@@ -10,10 +10,12 @@
   },
   "dependencies": {
     "next": "16.2.1",
+    "pdfjs-dist": "^5.6.205",
     "qs": "^6.15.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-markdown": "^10.1.0",
+    "react-pageflip": "^2.0.3",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
     "resend": "^6.9.4"

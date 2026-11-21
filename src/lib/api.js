@@ -60,6 +60,7 @@ export async function getAlbumsComplets(artisteSlug = null) {
     populate: {
       pochette: true,
       galerie: true,
+      livrets: { populate: ['fichier', 'vignette', 'fichier_original'] },
       artistes: { fields: ['nom', 'slug'] },
       recompenses: { populate: ['image'] },
     },
