@@ -113,21 +113,31 @@ export default function FlipbookViewer({ src, onClose }) {
     return () => { annule = true; unsubscribe(); };
   }, [src]);
 
-  // En mode portrait (une page), `flipPrev()`/`flipNext()` sans coin explicite
-  // sautent SANS animation. Passer par `flip(pageCible, 'bottom')` force
-  // l'animation de tournage dans les deux sens.
+  // En mode PORTRAIT (une page), `flipPrev()`/`flipNext()` sans coin explicite
+  // sautent SANS animation → on passe par `flip(pageCible, 'bottom')` (coin
+  // explicite) qui anime dans les deux sens. En mode PAYSAGE (deux pages), au
+  // contraire, `flipNext/flipPrev` naviguent correctement d'un SPREAD à l'autre
+  // ET animent déjà — alors que `flip(current±1)` resterait dans la même double
+  // page (incrément d'une seule page) et bloquerait la navigation. On branche
+  // donc sur l'orientation réelle de StPageFlip.
   const flipNext = useCallback(() => {
     const pf = livreRef.current?.pageFlip?.();
     if (!pf) return;
-    const n = pf.getPageCount?.() ?? 0;
-    const cible = Math.min((pf.getCurrentPageIndex?.() ?? pageCouranteRef.current) + 1, n - 1);
-    pf.flip ? pf.flip(cible, 'bottom') : pf.flipNext();
+    if (pf.getOrientation?.() === 'portrait' && pf.flip) {
+      const n = pf.getPageCount?.() ?? 0;
+      pf.flip(Math.min((pf.getCurrentPageIndex?.() ?? 0) + 1, n - 1), 'bottom');
+    } else {
+      pf.flipNext?.();
+    }
   }, []);
   const flipPrev = useCallback(() => {
     const pf = livreRef.current?.pageFlip?.();
     if (!pf) return;
-    const cible = Math.max((pf.getCurrentPageIndex?.() ?? pageCouranteRef.current) - 1, 0);
-    pf.flip ? pf.flip(cible, 'bottom') : pf.flipPrev();
+    if (pf.getOrientation?.() === 'portrait' && pf.flip) {
+      pf.flip(Math.max((pf.getCurrentPageIndex?.() ?? 0) - 1, 0), 'bottom');
+    } else {
+      pf.flipPrev?.();
+    }
   }, []);
 
   // Dézoome et recentre (retour à l'affichage « page entière »).
