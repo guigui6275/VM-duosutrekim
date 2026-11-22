@@ -120,6 +120,17 @@ export default function FlipbookViewer({ src, onClose }) {
   // ET animent déjà — alors que `flip(current±1)` resterait dans la même double
   // page (incrément d'une seule page) et bloquerait la navigation. On branche
   // donc sur l'orientation réelle de StPageFlip.
+  // Choix des méthodes selon l'orientation réelle de StPageFlip :
+  // - PORTRAIT (une page) : `flipNext('…')` saisit un point à
+  //   x = gauche + 2×largeurPage − 10 → HORS de la page unique, d'où une
+  //   « vaguelette » au lieu d'un tournage. On passe donc par `flip(index,…)`
+  //   pour AVANCER (vraie page qui tourne). Pour RECULER, `flipPrev('bottom')`
+  //   saisit à x = 10 (bord gauche, valide en portrait) → vrai tournage miroir.
+  // - PAYSAGE (deux pages) : `flipNext()/flipPrev()` naviguent par double-page
+  //   ET animent correctement (2×largeurPage est alors le bon point).
+  // Portrait : les DEUX sens utilisent la même animation `flip(index,'bottom')`
+  // (choix B de l'utilisateur) → avant et arrière identiques. Paysage :
+  // méthodes natives (navigation par double-page + animation correctes).
   const flipNext = useCallback(() => {
     const pf = livreRef.current?.pageFlip?.();
     if (!pf) return;
@@ -288,7 +299,6 @@ export default function FlipbookViewer({ src, onClose }) {
             width={w}
             height={h}
             size="fixed"
-            showCover
             usePortrait
             mobileScrollSupport={false}
             maxShadowOpacity={0.25}
