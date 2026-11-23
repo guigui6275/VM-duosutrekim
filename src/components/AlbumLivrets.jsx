@@ -9,6 +9,40 @@ export const LABELS_LANGUE = {
   IT: 'Italiano', JP: '日本語', NL: 'Nederlands', PT: 'Português',
 };
 
+// Un livret bilingue stocke ses deux langues dans le même champ `langue`,
+// séparées par un « / » (ex. "FR/EN") → un seul PDF, une seule pastille.
+export function languesDe(langue) {
+  return (langue || '').split('/').map((s) => s.trim().toUpperCase()).filter(Boolean);
+}
+export function libelleLangues(langue) {
+  const codes = languesDe(langue);
+  if (codes.length === 0) return 'Livret';
+  return codes.map((c) => LABELS_LANGUE[c] || c).join(' / ');
+}
+
+// Petits drapeaux ronds (SVG dans /public/flags/, nommés par code de langue)
+// en bas à droite de la vignette — même esprit que ceux intégrés dans
+// certains livrets imprimés. N'affiche que les langues pour lesquelles un
+// drapeau existe.
+function Drapeaux({ langue }) {
+  const codes = languesDe(langue).filter((c) => LABELS_LANGUE[c]);
+  if (codes.length === 0) return null;
+  return (
+    <div style={{ position: 'absolute', bottom: '6px', right: '6px', display: 'flex', gap: '3px', pointerEvents: 'none' }}>
+      {codes.map((c) => (
+        <img
+          key={c}
+          src={`/flags/${c}.svg`}
+          alt={LABELS_LANGUE[c] || c}
+          width={22}
+          height={22}
+          style={{ width: '22px', height: '22px', borderRadius: '50%', boxShadow: '0 1px 3px rgba(0,0,0,0.45)', display: 'block' }}
+        />
+      ))}
+    </div>
+  );
+}
+
 // PdfViewer est un forwardRef : sans ref transmise, son effet de rendu sur
 // canvas s'arrête avant de dessiner quoi que ce soit (vignette vide).
 // N'est utilisé qu'en repli, si jamais la vignette pré-générée manque.
@@ -77,6 +111,7 @@ export default function AlbumLivrets({ livrets = [] }) {
           // La couverture recadrée est quasi carrée (~1:1) — une boîte carrée
           // évite les bandeaux vides que laissait un format portrait avec
           // object-fit:contain.
+          position: 'relative',
           width: '140px',
           height: '140px',
           padding: 0,
@@ -91,17 +126,22 @@ export default function AlbumLivrets({ livrets = [] }) {
         ) : (
           <VignetteRendue key={livretActif.id} fichier={livretActif.fichier} />
         )}
+        {livretActif.afficher_drapeau && <Drapeaux langue={livretActif.langue} />}
       </button>
 
-      {livrets.length > 1 && (
+      {/* Libellé de langue sous la vignette — affiché même pour un seul livret
+          (indication de la langue), cliquable seulement s'il y en a plusieurs. */}
+      {livrets.length > 0 && (
         <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
           {livrets.map((livret, i) => {
             const actif = i === selection;
+            const unSeul = livrets.length === 1;
             return (
               <button
                 key={livret.id}
                 onClick={() => setSelection(i)}
-                title={livret.langue ? LABELS_LANGUE[livret.langue] || livret.langue : 'Livret'}
+                disabled={unSeul}
+                title={libelleLangues(livret.langue)}
                 style={{
                   fontSize: '10px',
                   letterSpacing: '0.08em',
@@ -111,10 +151,10 @@ export default function AlbumLivrets({ livrets = [] }) {
                   border: `0.5px solid ${actif ? 'var(--color-or)' : 'var(--color-bordure)'}`,
                   color: actif ? 'var(--color-or)' : 'var(--color-texte-muted)',
                   background: 'transparent',
-                  cursor: 'pointer',
+                  cursor: unSeul ? 'default' : 'pointer',
                 }}
               >
-                {livret.langue || i + 1}
+                {livret.langue ? languesDe(livret.langue).join(' / ') : (unSeul ? libelleLangues(livret.langue) : i + 1)}
               </button>
             );
           })}
